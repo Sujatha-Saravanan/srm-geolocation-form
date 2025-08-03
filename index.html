@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SRM Location Form Redirect</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    function redirectIfAtSRMLocation() {
+      const targetLat = 12.8234;
+      const targetLng = 80.0431;
+      const tolerance = 0.001; // Allow small variation (~100m)
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var lat = position.coords.latitude;
+          var lng = position.coords.longitude;
+
+          // Check if user is near the target location
+          var isAtSRM =
+            Math.abs(lat - targetLat) <= tolerance &&
+            Math.abs(lng - targetLng) <= tolerance;
+
+          if (isAtSRM) {
+            // Google Form URL
+            var formURL = "https://docs.google.com/forms/d/e/1FAIpQLSd9h_8BhIC9yd4IgH5nkw78oaZmLW1c8c2E2w9WJh297P-nig/viewform";
+
+            // Form entries
+            var params = "?usp=pp_url"
+              + "&entry.339749512=" + encodeURIComponent(lat)
+              + "&entry.1498293051=" + encodeURIComponent(lng);
+
+            window.location.href = formURL + params;
+          } else {
+            alert("You are not at the SRM campus location.\n\nLatitude: " + lat.toFixed(6) + "\nLongitude: " + lng.toFixed(6));
+          }
+
+        }, function(error) {
+          alert("Error getting location: " + error.message);
+        });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+  </script>
+</head>
+<body onload="redirectIfAtSRMLocation()">
+  <h2>Checking if you're at SRM campus...</h2>
+  <p>If you're at the location, you'll be redirected to the form.</p>
+</body>
+</html>
